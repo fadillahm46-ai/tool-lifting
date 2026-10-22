@@ -1,0 +1,19 @@
+{
+"name": "Inventaris Tools Lifting SE",
+"short_name": "Tools Lifting",
+"start_url": "./index.html",
+"display": "standalone",
+"background_color": "#0f172a",
+"theme_color": "#0284c7",
+"orientation": "portrait-primary",
+"description": "Sistem Manajemen Inventaris Peralatan Lifting & Rigging SE",
+"categories": ["business", "productivity", "utilities"],
+"icons": [
+{
+"src": "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%23e0f2fe'/%3E%3Cpath d='M47 34 C47 29.5 50.5 26 55 26 L65 26 C69.5 26 73 29.5 73 34 L73 38 L47 38 Z' fill='%230284c7'/%3E%3Crect x='53' y='31' width='14' height='7' rx='3.5' fill='%23e0f2fe'/%3E%3Cpath d='M34 50 C34 43 39 38 46 38 L74 38 C81 38 86 43 86 50 L86 57 L34 57 Z' fill='%230284c7'/%3E%3Cpath d='M34 61 L86 61 L86 73 C86 80 81 85 74 85 L46 85 C39 85 34 80 34 73 Z' fill='%230284c7'/%3E%3Crect x='44' y='54' width='7' height='10' rx='2' fill='%23ffffff'/%3E%3Crect x='69' y='54' width='7' height='10' rx='2' fill='%23ffffff'/%3E%3C/svg%3E",
+"sizes": "192x192 512x512",
+"type": "image/svg+xml",
+"purpose": "any maskable"
+}
+]
+}
