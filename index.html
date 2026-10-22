@@ -165,7 +165,7 @@
                         </p>
                     </div>
                 </div>
-                <button onclick="logout()" class="text-red-400 hover:text-white hover:bg-red-500/20 p-2 rounded-lg transition-colors cursor-pointer flex-shrink-0" title="Keluar">
+                <button onclick="logout()" class="text-red-400 hover:text-white hover:bg-red-500/20 p-2 rounded-lg transition-colors cursor-pointer flex-shrink-0" title="Logout">
                     <i class="fas fa-sign-out-alt text-base"></i>
                 </button>
             </div>
@@ -204,10 +204,10 @@
                     <button onclick="forceRefreshCurrentView()" class="text-gray-400 hover:text-brand-600 transition-colors p-2 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center" title="Muat Ulang Data">
                         <i class="fas fa-sync-alt text-sm" id="syncIconHeader"></i>
                     </button>
-                    <!-- Tombol Logout di Atas -->
-                    <button onclick="logout()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors cursor-pointer" title="Keluar Aplikasi">
+                    <!-- Tombol Logout di Atas (Hanya tampil di mode HP, di desktop disembunyikan karena sudah ada di sidebar kiri) -->
+                    <button onclick="logout()" class="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors cursor-pointer" title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span>Keluar</span>
+                        <span>Logout</span>
                     </button>
                 </div>
             </header>
@@ -217,57 +217,55 @@
                 
                 <!-- View: Dashboard -->
                 <div id="content-dashboard" class="content-section fade-in">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-                        <div>
-                            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 tracking-tight">Ringkasan Hari Ini</h2>
-                            <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Pantau metrik utama dari pergerakan inventaris Anda.</p>
-                        </div>
-                        <button onclick="loadDashboard(true)" class="flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg shadow-xs hover:bg-gray-50 text-xs sm:text-sm font-medium transition-colors cursor-pointer">
-                            <i class="fas fa-sync-alt"></i> Segarkan Data
-                        </button>
+                    <div class="mb-4 sm:mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 tracking-tight">Ringkasan Hari Ini</h2>
+                        <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Pantau metrik utama dari pergerakan inventaris Anda.</p>
                     </div>
 
-                    <!-- Stat Cards Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-                        <div class="bg-white rounded-2xl p-5 sm:p-6 relative overflow-hidden border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)]">
-                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-50/50 rounded-full"></div>
-                            <div class="flex justify-between items-start mb-4 relative z-10">
-                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                    <!-- Stat Cards Grid: 3 Sejajar Horizontal di Mobile & Desktop -->
+                    <div class="grid grid-cols-3 gap-2 sm:gap-4 md:gap-5 mb-6">
+                        <!-- Card 1: Total Macam -->
+                        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 relative overflow-hidden border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex flex-col justify-between">
+                            <div class="absolute -top-10 -right-10 w-24 sm:w-32 h-24 sm:h-32 bg-blue-50/50 rounded-full pointer-events-none"></div>
+                            <div class="flex items-center justify-between gap-1 mb-2 sm:mb-4 relative z-10">
+                                <div class="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 bg-blue-100 text-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-base md:text-lg flex-shrink-0">
                                     <i class="fas fa-layer-group"></i>
                                 </div>
-                                <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-semibold rounded-full border border-blue-100">Total Macam</span>
+                                <span class="px-1.5 sm:px-2.5 py-0.5 bg-blue-50 text-blue-600 text-[9px] sm:text-xs font-semibold rounded-full border border-blue-100 truncate">Macam</span>
                             </div>
                             <div class="relative z-10">
-                                <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="stat-total-barang">0</h3>
-                                <p class="text-xs sm:text-sm text-gray-500 font-medium">Jenis barang di database</p>
+                                <h3 class="text-2xl sm:text-4xl md:text-5xl font-black text-gray-800 mb-0.5 sm:mb-1 tracking-tight" id="stat-total-barang">0</h3>
+                                <p class="text-[10px] sm:text-xs md:text-sm text-gray-500 font-medium truncate">Total Barang</p>
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-5 sm:p-6 relative overflow-hidden border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)]">
-                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-50/50 rounded-full"></div>
-                            <div class="flex justify-between items-start mb-4 relative z-10">
-                                <div class="w-12 h-12 bg-emerald-100 text-emerald-500 rounded-xl flex items-center justify-center text-xl">
+                        <!-- Card 2: Inbound -->
+                        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 relative overflow-hidden border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex flex-col justify-between">
+                            <div class="absolute -top-10 -right-10 w-24 sm:w-32 h-24 sm:h-32 bg-emerald-50/50 rounded-full pointer-events-none"></div>
+                            <div class="flex items-center justify-between gap-1 mb-2 sm:mb-4 relative z-10">
+                                <div class="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 bg-emerald-100 text-emerald-500 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-base md:text-lg flex-shrink-0">
                                     <i class="fas fa-dolly"></i>
                                 </div>
-                                <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-semibold rounded-full border border-emerald-100">Inbound</span>
+                                <span class="px-1.5 sm:px-2.5 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] sm:text-xs font-semibold rounded-full border border-emerald-100 truncate">Inbound</span>
                             </div>
                             <div class="relative z-10">
-                                <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="stat-total-masuk">0</h3>
-                                <p class="text-xs sm:text-sm text-gray-500 font-medium">Total transaksi masuk</p>
+                                <h3 class="text-2xl sm:text-4xl md:text-5xl font-black text-gray-800 mb-0.5 sm:mb-1 tracking-tight" id="stat-total-masuk">0</h3>
+                                <p class="text-[10px] sm:text-xs md:text-sm text-gray-500 font-medium truncate">Trx Masuk</p>
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-2xl p-5 sm:p-6 relative overflow-hidden border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)]">
-                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-50/50 rounded-full"></div>
-                            <div class="flex justify-between items-start mb-4 relative z-10">
-                                <div class="w-12 h-12 bg-rose-100 text-rose-500 rounded-xl flex items-center justify-center text-xl">
+                        <!-- Card 3: Outbound -->
+                        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 relative overflow-hidden border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex flex-col justify-between">
+                            <div class="absolute -top-10 -right-10 w-24 sm:w-32 h-24 sm:h-32 bg-rose-50/50 rounded-full pointer-events-none"></div>
+                            <div class="flex items-center justify-between gap-1 mb-2 sm:mb-4 relative z-10">
+                                <div class="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 bg-rose-100 text-rose-500 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-base md:text-lg flex-shrink-0">
                                     <i class="fas fa-shopping-cart"></i>
                                 </div>
-                                <span class="px-3 py-1 bg-rose-50 text-rose-600 text-xs font-semibold rounded-full border border-rose-100">Outbound</span>
+                                <span class="px-1.5 sm:px-2.5 py-0.5 bg-rose-50 text-rose-600 text-[9px] sm:text-xs font-semibold rounded-full border border-rose-100 truncate">Outbound</span>
                             </div>
                             <div class="relative z-10">
-                                <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-1" id="stat-total-keluar">0</h3>
-                                <p class="text-xs sm:text-sm text-gray-500 font-medium">Total transaksi keluar</p>
+                                <h3 class="text-2xl sm:text-4xl md:text-5xl font-black text-gray-800 mb-0.5 sm:mb-1 tracking-tight" id="stat-total-keluar">0</h3>
+                                <p class="text-[10px] sm:text-xs md:text-sm text-gray-500 font-medium truncate">Trx Keluar</p>
                             </div>
                         </div>
                     </div>
@@ -313,8 +311,8 @@
                 </div>
 
                 <!-- View: Data Barang -->
-                <div id="content-barang" class="content-section hidden-view fade-in">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+                <div id="content-barang" class="content-section hidden-view fade-in flex flex-col h-full">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 shrink-0">
                         <div class="relative w-full sm:w-64">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-search text-gray-400 text-xs"></i>
@@ -331,9 +329,9 @@
                         </div>
                     </div>
 
-                    <!-- Tabel dengan whitespace-nowrap memanjang ke samping -->
-                    <div class="bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden">
-                        <div class="overflow-x-auto overflow-y-auto max-h-[60vh] relative">
+                    <!-- Tabel dengan whitespace-nowrap memanjang ke samping & mepet ke bawah -->
+                    <div class="bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden flex flex-col flex-1 min-h-[calc(100vh-210px)] sm:min-h-[calc(100vh-190px)]">
+                        <div class="overflow-x-auto overflow-y-auto flex-1 max-h-[calc(100vh-265px)] sm:max-h-[calc(100vh-245px)] relative">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50 sticky top-0 z-10 shadow-xs">
                                     <tr>
@@ -359,7 +357,7 @@
                                     <tr>
                                         <td colspan="2" class="px-5 py-3 text-left text-xs uppercase tracking-wider font-bold whitespace-nowrap">TOTAL</td>
                                         <td class="px-5 py-3 text-left text-xs font-bold text-brand-700 whitespace-nowrap" id="footTotalJenis">0 Jenis</td>
-                                        <td class="px-5 py-3 text-left text-xs font-bold text-gray-900 whitespace-nowrap" id="footTotalStok">0</td>
+                                        <td class="px-5 py-3 text-left text-base font-extrabold text-gray-900 whitespace-nowrap" id="footTotalStok">0</td>
                                         <td colspan="2" class="px-5 py-3 text-xs text-gray-500 font-normal whitespace-nowrap">Unit Tools</td>
                                     </tr>
                                 </tfoot>
@@ -367,7 +365,7 @@
                         </div>
                         
                         <!-- Ringkasan Tools di Bagian Bawah Tabel -->
-                        <div id="categorySummaryBar" class="bg-gray-50 p-4 border-t border-gray-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+                        <div id="categorySummaryBar" class="bg-gray-50 p-4 border-t border-gray-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs shrink-0">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-gray-700"><i class="fas fa-boxes text-brand-600 mr-1"></i> Total Semua Tools:</span>
                                 <span id="summaryGrandTotal" class="px-3 py-1 bg-brand-600 text-white font-bold rounded-lg text-xs sm:text-sm shadow-xs">0 Tools</span>
@@ -398,7 +396,11 @@
                             <form id="formBarang" class="space-y-3.5">
                                 <div class="bg-blue-50 text-blue-700 text-[11px] p-3 rounded-xl flex items-start gap-2">
                                     <i class="fas fa-info-circle mt-0.5"></i>
-                                    <span>Jika Kode Barang sudah ada di database, data akan diperbarui otomatis.</span>
+                                    <span>Kode Barang dapat disesuaikan atau diubah kapan saja. Data akan otomatis disinkronkan ke database.</span>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Kode Barang *</label>
+                                    <input type="text" id="fKode" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-brand-500 focus:border-brand-500 text-xs sm:text-sm font-semibold uppercase" placeholder="Contoh: TL-001">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">Kode Barang *</label>
@@ -579,6 +581,7 @@
             cacheMasuk: null, cacheKeluar: null, cacheDashboard: null,
             barangLoaded: false, charts: {}
         };
+        let editingOldKode = null;
 
         const elLoader = document.getElementById('globalLoader');
         const elLoaderText = document.getElementById('loaderText');
@@ -685,9 +688,13 @@
             }
             if (action === 'getBarang') return [...mockDB.barang];
             if (action === 'addBarang') {
-                const idx = mockDB.barang.findIndex(b => b.kode === payload.kode);
-                if (idx !== -1) mockDB.barang[idx] = { kode: payload.kode, nama: payload.nama, kategori: payload.kat, satuan: payload.sat, stok: Number(payload.stok) || 0 };
-                else mockDB.barang.push({ kode: payload.kode, nama: payload.nama, kategori: payload.kat, satuan: payload.sat, stok: Number(payload.stok) || 0 });
+                const targetKode = payload.oldKode || payload.kode;
+                const idx = mockDB.barang.findIndex(b => b.kode === targetKode);
+                if (idx !== -1) {
+                    mockDB.barang[idx] = { kode: payload.kode, nama: payload.nama, kategori: payload.kat, satuan: payload.sat, stok: Number(payload.stok) || 0 };
+                } else {
+                    mockDB.barang.push({ kode: payload.kode, nama: payload.nama, kategori: payload.kat, satuan: payload.sat, stok: Number(payload.stok) || 0 });
+                }
                 return { success: true, message: 'Data barang disimpan' };
             }
             if (action === 'deleteBarang') {
@@ -790,8 +797,8 @@
 
         function logout() {
             Swal.fire({
-                title: 'Keluar aplikasi?', icon: 'warning', showCancelButton: true,
-                confirmButtonColor: '#0ea5e9', cancelButtonColor: '#ef4444', confirmButtonText: 'Ya, Keluar'
+                title: 'Logout aplikasi?', icon: 'warning', showCancelButton: true,
+                confirmButtonColor: '#0ea5e9', cancelButtonColor: '#ef4444', confirmButtonText: 'Ya, Logout'
             }).then((result) => {
                 if (result.isConfirmed) {
                     try { localStorage.removeItem('tools_lifting_session'); } catch(e) {}
@@ -1003,18 +1010,24 @@
                 categoryMap[kat].count += 1; categoryMap[kat].totalStok += stokNum;
 
                 let stockClass = "text-gray-900"; let stockIcon = "";
-                if (stokNum === 0) { stockClass = "text-red-600 font-bold"; stockIcon = '<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>'; }
-                else if (stokNum < 5) stockClass = "text-orange-500 font-bold";
+                if (stokNum === 0) { 
+                    stockClass = "text-red-600"; 
+                    stockIcon = '<i class="fas fa-exclamation-circle text-red-500 mr-1 text-xs"></i>'; 
+                } else if (stokNum < 5) { 
+                    stockClass = "text-orange-500"; 
+                }
 
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
                 tr.innerHTML = `
-                    <td class="px-5 py-3.5 whitespace-nowrap text-xs font-semibold text-brand-600">${item.kode}</td>
-                    <td class="px-5 py-3.5 whitespace-nowrap text-xs font-medium text-gray-900">${item.nama}</td>
-                    <td class="px-5 py-3.5 whitespace-nowrap text-xs text-gray-500"><span class="px-2 py-0.5 inline-flex text-[11px] leading-4 font-semibold rounded-full bg-blue-100 text-blue-800">${item.kategori}</span></td>
-                    <td class="px-5 py-3.5 whitespace-nowrap text-xs ${stockClass}">${stockIcon} ${item.stok}</td>
-                    <td class="px-5 py-3.5 whitespace-nowrap text-xs text-gray-500">${item.satuan}</td>
-                    <td class="px-5 py-3.5 whitespace-nowrap text-xs text-center">
+                    <td class="px-5 py-3 whitespace-nowrap text-xs font-semibold text-brand-600">${item.kode}</td>
+                    <td class="px-5 py-3 whitespace-nowrap text-xs font-medium text-gray-900">${item.nama}</td>
+                    <td class="px-5 py-3 whitespace-nowrap text-xs text-gray-500"><span class="px-2 py-0.5 inline-flex text-[11px] leading-4 font-semibold rounded-full bg-blue-100 text-blue-800">${item.kategori}</span></td>
+                    <td class="px-5 py-3 whitespace-nowrap ${stockClass}">
+                        <span class="text-[18px] font-extrabold tracking-tight inline-flex items-center gap-1">${stockIcon} ${item.stok}</span>
+                    </td>
+                    <td class="px-5 py-3 whitespace-nowrap text-xs text-gray-500">${item.satuan}</td>
+                    <td class="px-5 py-3 whitespace-nowrap text-xs text-center">
                         <div class="flex justify-center gap-1.5">
                             <button onclick="editBarang('${item.kode}')" class="text-brand-600 hover:text-brand-900 bg-brand-50 hover:bg-brand-100 w-7 h-7 rounded-lg cursor-pointer flex items-center justify-center"><i class="fas fa-edit text-xs"></i></button>
                             <button onclick="hapusBarang('${item.kode}')" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 w-7 h-7 rounded-lg cursor-pointer flex items-center justify-center"><i class="fas fa-trash text-xs"></i></button>
@@ -1058,6 +1071,7 @@
         }
 
         function openModalBarang() {
+            editingOldKode = null;
             document.getElementById('formBarang').reset();
             const kodeInput = document.getElementById('fKode');
             kodeInput.readOnly = false; 
@@ -1070,8 +1084,11 @@
         function editBarang(kode) {
             const item = appState.dataBarang.find(b => b.kode === kode);
             if (item) {
+                editingOldKode = item.kode;
                 const kodeInput = document.getElementById('fKode');
-                kodeInput.value = item.kode; kodeInput.readOnly = true; kodeInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                kodeInput.value = item.kode;
+                kodeInput.readOnly = false; // Sekarang Kode BISA diedit
+                kodeInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
                 document.getElementById('fNama').value = item.nama;
                 document.getElementById('fKategori').value = item.kategori;
                 document.getElementById('fSatuan').value = item.satuan;
@@ -1115,21 +1132,33 @@
             const kat = document.getElementById('fKategori').value;
             const sat = document.getElementById('fSatuan').value.trim();
             const stk = parseInt(document.getElementById('fStok').value, 10) || 0;
+            const oldKode = editingOldKode;
 
             closeModal('modalBarang');
 
             const backup = [...appState.dataBarang];
-            const existingIdx = appState.dataBarang.findIndex(b => b.kode === k);
-            if (existingIdx !== -1) {
-                appState.dataBarang[existingIdx] = { kode: k, nama: n, kategori: kat, satuan: sat, stok: stk };
+            
+            if (oldKode) {
+                const existingIdx = appState.dataBarang.findIndex(b => b.kode === oldKode);
+                if (existingIdx !== -1) {
+                    appState.dataBarang[existingIdx] = { kode: k, nama: n, kategori: kat, satuan: sat, stok: stk };
+                } else {
+                    appState.dataBarang.push({ kode: k, nama: n, kategori: kat, satuan: sat, stok: stk });
+                }
             } else {
-                appState.dataBarang.push({ kode: k, nama: n, kategori: kat, satuan: sat, stok: stk });
+                const existingIdx = appState.dataBarang.findIndex(b => b.kode === k);
+                if (existingIdx !== -1) {
+                    appState.dataBarang[existingIdx] = { kode: k, nama: n, kategori: kat, satuan: sat, stok: stk };
+                } else {
+                    appState.dataBarang.push({ kode: k, nama: n, kategori: kat, satuan: sat, stok: stk });
+                }
             }
             renderTableBarang(appState.dataBarang);
             setBackgroundSyncIndicator(true);
 
-            const res = await callApi('addBarang', { kode: k, nama: n, kat, sat, stok: stk });
+            const res = await callApi('addBarang', { kode: k, oldKode: oldKode || k, nama: n, kat, sat, stok: stk });
             setBackgroundSyncIndicator(false);
+            editingOldKode = null;
 
             if (res.success) {
                 if (appState.cacheDashboard) appState.cacheDashboard.totalBarang = appState.dataBarang.length;
