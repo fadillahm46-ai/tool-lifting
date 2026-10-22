@@ -558,10 +558,14 @@
         // =========================================================================
         // PENGATURAN API BACKEND GOOGLE APPS SCRIPT (UNTUK DEPLOY VERCEL)
         // =========================================================================
-        // Setelah deploy Google Apps Script sebagai Web App, salin URL Web App (/exec)
-        // dan tempelkan ke dalam tanda kutip di bawah ini:
-        // Contoh: const GAS_API_URL = "https://script.google.com/macros/s/AKfycb.../exec";
-        const GAS_API_URL = ""; 
+        // URL Web App hasil deploy Google Apps Script (/exec) - Pintu Gerbang API
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzzVxi7Tw8n5wGi9IXx73I11oXoZJ6GIosOEfCA1Ve7hafAQlG8AVWmImn8JokhIRM3Gg/exec"; 
+        
+        // Script ID Google Apps Script Project
+        const SCRIPT_ID = "13zNYOoC1WXiyzMiaAM4Z_cexQqzXk4UHp8HsDiMGF6DaYngFOuh87BhE";
+
+        // ID Google Spreadsheet Database Utama
+        const SPREADSHEET_ID = "1AG-d3x02q4WYA4yHMcusmGT-6lfMW_uIXdKO49SNV5g";
 
         // Daftarkan Service Worker
         if ('serviceWorker' in navigator) {
