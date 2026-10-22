@@ -3,6 +3,12 @@
 // Simpan kode ini pada editor Apps Script Spreadsheet Anda
 // ============================================================================
 
+// Script ID Project Apps Script Anda
+const SCRIPT_ID = '13zNYOoC1WXiyzMiaAM4Z_cexQqzXk4UHp8HsDiMGF6DaYngFOuh87BhE';
+
+// ID Google Spreadsheet database utama Anda
+const SPREADSHEET_ID = '1AG-d3x02q4WYA4yHMcusmGT-6lfMW_uIXdKO49SNV5g';
+
 const SHEET_USERS = 'Users';
 const SHEET_BARANG = 'MasterBarang';
 const SHEET_MASUK = 'TransaksiMasuk';
@@ -12,7 +18,22 @@ const SHEET_KELUAR = 'TransaksiKeluar';
  * Helper untuk mengambil Sheet atau membuat sheet & header otomatis jika belum ada
  */
 function getDbSheet(sheetName) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let ss;
+  try {
+    if (SPREADSHEET_ID && SPREADSHEET_ID.trim() !== '') {
+      ss = SpreadsheetApp.openById(SPREADSHEET_ID.trim());
+    } else {
+      ss = SpreadsheetApp.getActiveSpreadsheet();
+    }
+  } catch (err) {
+    ss = SpreadsheetApp.getActiveSpreadsheet();
+  }
+  
+  // Validasi pengaman jika spreadsheet tidak dapat ditemukan
+  if (!ss) {
+    throw new Error('Spreadsheet tidak terdeteksi. Jika script ini dibuat terpisah (standalone), mohon masukkan ID Spreadsheet pada variabel SPREADSHEET_ID di baris atas.');
+  }
+
   let sheet = ss.getSheetByName(sheetName);
   
   if (!sheet) {
@@ -31,6 +52,7 @@ function getDbSheet(sheetName) {
  */
 function doGet(e) {
   try {
+    // 1. Jika ada parameter request API dari frontend/Vercel
     if (e && e.parameter && e.parameter.action) {
       const action = e.parameter.action;
       let res = {};
@@ -41,14 +63,19 @@ function doGet(e) {
       return ContentService.createTextOutput(JSON.stringify(res))
         .setMimeType(ContentService.MimeType.JSON);
     }
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ success: false, message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
 
-  // Jika dibuka langsung via URL Apps Script
-  return HtmlService.createHtmlOutput('<h3>Backend API Tools Lifting SE aktif dan siap digunakan.</h3>')
-    .setTitle('API Tools Lifting SE');
+    // 2. Jika dibuka langsung via Web App Apps Script (menggunakan nama file 'index' huruf kecil)
+    return HtmlService.createHtmlOutputFromFile('index')
+      .setTitle('Inventaris Tools Lifting SE')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+  } catch (err) {
+    // Fallback jika file HTML 'index' tidak ada di Apps Script (karena frontend di-deploy di Vercel)
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: 'online', 
+      message: 'Backend API Tools Lifting SE aktif dan siap digunakan.' 
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 /**
@@ -74,7 +101,13 @@ function doPost(e) {
         responseData = getBarang();
         break;
       case 'addBarang':
-        responseData = addBarang(request.kode, request.nama, request.kategori, request.satuan, request.stok);
+        responseData = addBarang(
+          request.kode, 
+          request.nama, 
+          request.kat || request.kategori, 
+          request.sat || request.satuan, 
+          request.stok
+        );
         break;
       case 'deleteBarang':
         responseData = deleteBarang(request.kode);
@@ -83,7 +116,13 @@ function doPost(e) {
         responseData = getTransaksi(request.jenis);
         break;
       case 'prosesTransaksi':
-        responseData = prosesTransaksi(request.jenis, request.kode, request.jumlah, request.keterangan, request.bukti);
+        responseData = prosesTransaksi(
+          request.jenis, 
+          request.kode, 
+          request.jumlah, 
+          request.keterangan || request.ket, 
+          request.bukti
+        );
         break;
       case 'deleteTransaksi':
         responseData = deleteTransaksi(request.jenis, request.rowId);
