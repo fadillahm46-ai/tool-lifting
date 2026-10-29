@@ -502,9 +502,35 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">Pilih Barang *</label>
-                                    <select id="tKode" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-brand-500 focus:border-brand-500 text-xs sm:text-sm">
-                                        <option value="">-- Loading data... --</option>
-                                    </select>
+                                    <!-- Input tersembunyi untuk menyimpan kode barang terpilih -->
+                                    <input type="hidden" id="tKode" name="kode" required>
+                                    
+                                    <!-- Searchable Dropdown Container -->
+                                    <div class="relative" id="searchableDropdownWrapper">
+                                        <button type="button" id="dropdownBtn" onclick="toggleSearchableDropdown()" class="w-full flex items-center justify-between px-3 py-2 bg-white border border-gray-300 rounded-lg text-left text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 hover:border-brand-400 transition-colors cursor-pointer shadow-xs">
+                                            <span id="dropdownBtnText" class="truncate text-gray-400">-- Pilih Barang --</span>
+                                            <i class="fas fa-chevron-down text-gray-400 text-xs ml-2 transition-transform duration-200" id="dropdownChevron"></i>
+                                        </button>
+                                        
+                                        <!-- Panel Dropdown dengan Kotak Pencarian -->
+                                        <div id="dropdownMenu" class="hidden absolute top-full left-0 right-0 mt-1.5 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden fade-in">
+                                            <div class="p-2 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
+                                                <i class="fas fa-search text-gray-400 text-xs pl-1"></i>
+                                                <input type="text" id="dropdownSearchInput" placeholder="Cari kode atau nama barang..." class="w-full bg-transparent border-0 text-xs sm:text-sm focus:outline-none text-gray-800 placeholder-gray-400 py-1" autocomplete="off">
+                                                <button type="button" id="clearDropdownSearch" onclick="clearSearchDropdown()" class="hidden text-gray-400 hover:text-gray-600 text-xs pr-1 cursor-pointer">
+                                                    <i class="fas fa-times-circle"></i>
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Daftar Pilihan Barang -->
+                                            <ul id="dropdownOptionsList" class="max-h-56 overflow-y-auto divide-y divide-gray-50 text-xs sm:text-sm py-1">
+                                            </ul>
+                                            
+                                            <div id="dropdownNoResult" class="hidden p-3.5 text-center text-xs text-gray-400">
+                                                <i class="fas fa-box-open mr-1"></i> Barang tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
                                     <p class="text-[11px] text-gray-500 mt-1" id="tStokInfo"></p>
                                 </div>
                                 <div>
@@ -1274,22 +1300,171 @@
             a.click();
         }
 
-        function populateDropdownBarang() {
-            const sel = document.getElementById('tKode');
-            const currentVal = sel.value;
-            sel.innerHTML = '<option value="">-- Pilih Barang --</option>';
-            appState.dataBarang.forEach(b => sel.innerHTML += `<option value="${b.kode}">${b.kode} - ${b.nama}</option>`);
-            if (currentVal) sel.value = currentVal;
+        // ========================================================
+        // SEARCHABLE DROPDOWN UNTUK FORM TRANSAKSI
+        // ========================================================
+        function toggleSearchableDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            if (!menu) return;
+            if (menu.classList.contains('hidden')) {
+                openSearchableDropdown();
+            } else {
+                closeSearchableDropdown();
+            }
         }
 
-        document.getElementById('tKode').addEventListener('change', (e) => {
-            const item = appState.dataBarang.find(b => b.kode === e.target.value);
+        function openSearchableDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const chevron = document.getElementById('dropdownChevron');
+            const searchInput = document.getElementById('dropdownSearchInput');
+            if (!menu) return;
+            menu.classList.remove('hidden');
+            if (chevron) chevron.classList.add('rotate-180');
+            populateDropdownBarang(searchInput.value || '');
+            setTimeout(() => {
+                if (searchInput) searchInput.focus();
+            }, 60);
+        }
+
+        function closeSearchableDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const chevron = document.getElementById('dropdownChevron');
+            if (!menu) return;
+            menu.classList.add('hidden');
+            if (chevron) chevron.classList.remove('rotate-180');
+        }
+
+        function clearSearchDropdown() {
+            const searchInput = document.getElementById('dropdownSearchInput');
+            const clearBtn = document.getElementById('clearDropdownSearch');
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            if (clearBtn) clearBtn.classList.add('hidden');
+            populateDropdownBarang('');
+        }
+
+        function selectBarangInDropdown(kode) {
+            const item = appState.dataBarang.find(b => b.kode === kode);
+            const hiddenInput = document.getElementById('tKode');
+            const btnText = document.getElementById('dropdownBtnText');
             const infoEl = document.getElementById('tStokInfo');
+            
             if (item) {
+                hiddenInput.value = item.kode;
+                btnText.innerHTML = `<span class="font-bold text-brand-600">${item.kode}</span> - <span class="font-medium text-gray-800">${item.nama}</span>`;
                 infoEl.innerHTML = `Sisa Stok: <strong class="${item.stok == 0 ? 'text-red-500' : 'text-green-600'}">${item.stok} ${item.satuan}</strong>`;
-                if (appState.currentTrxType === 'Keluar') document.getElementById('tJumlah').setAttribute('max', item.stok);
-                else document.getElementById('tJumlah').removeAttribute('max');
-            } else infoEl.textContent = '';
+                if (appState.currentTrxType === 'Keluar') {
+                    document.getElementById('tJumlah').setAttribute('max', item.stok);
+                } else {
+                    document.getElementById('tJumlah').removeAttribute('max');
+                }
+            } else {
+                hiddenInput.value = '';
+                btnText.innerHTML = '<span class="text-gray-400">-- Pilih Barang --</span>';
+                infoEl.textContent = '';
+            }
+            closeSearchableDropdown();
+        }
+
+        function resetSearchableDropdown() {
+            const hiddenInput = document.getElementById('tKode');
+            if (hiddenInput) hiddenInput.value = '';
+            const btnText = document.getElementById('dropdownBtnText');
+            if (btnText) btnText.innerHTML = '<span class="text-gray-400">-- Pilih Barang --</span>';
+            const searchInput = document.getElementById('dropdownSearchInput');
+            if (searchInput) searchInput.value = '';
+            const clearBtn = document.getElementById('clearDropdownSearch');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            const infoEl = document.getElementById('tStokInfo');
+            if (infoEl) infoEl.textContent = '';
+            closeSearchableDropdown();
+        }
+
+        function populateDropdownBarang(filterKeyword = '') {
+            const listEl = document.getElementById('dropdownOptionsList');
+            const noResultEl = document.getElementById('dropdownNoResult');
+            const clearBtn = document.getElementById('clearDropdownSearch');
+            if (!listEl) return;
+            
+            if (clearBtn) {
+                if (filterKeyword) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+
+            listEl.innerHTML = '';
+            const kw = filterKeyword.toLowerCase().trim();
+            const filtered = (appState.dataBarang || []).filter(b => {
+                if (!kw) return true;
+                return (
+                    (b.kode && b.kode.toLowerCase().includes(kw)) ||
+                    (b.nama && b.nama.toLowerCase().includes(kw)) ||
+                    (b.kategori && b.kategori.toLowerCase().includes(kw))
+                );
+            });
+
+            if (filtered.length === 0) {
+                listEl.classList.add('hidden');
+                if (noResultEl) noResultEl.classList.remove('hidden');
+                return;
+            }
+            
+            listEl.classList.remove('hidden');
+            if (noResultEl) noResultEl.classList.add('hidden');
+
+            const currentKode = document.getElementById('tKode') ? document.getElementById('tKode').value : '';
+
+            filtered.forEach(b => {
+                const isSelected = b.kode === currentKode;
+                const li = document.createElement('li');
+                li.className = `px-3 py-2 cursor-pointer transition-colors flex items-center justify-between gap-2 hover:bg-blue-50/70 ${isSelected ? 'bg-blue-50 font-bold' : ''}`;
+                
+                let stockBadge = `<span class="text-[11px] ${b.stok == 0 ? 'text-red-500 font-bold' : 'text-gray-500'}">Stok: ${b.stok} ${b.satuan || ''}</span>`;
+
+                li.innerHTML = `
+                    <div class="flex flex-col min-w-0 pr-2">
+                        <div class="flex items-center gap-1.5 truncate">
+                            <span class="text-xs font-bold text-brand-600">${b.kode}</span>
+                            <span class="text-xs text-gray-700 truncate">${b.nama}</span>
+                        </div>
+                    </div>
+                    <div class="shrink-0 flex items-center gap-1.5">
+                        ${stockBadge}
+                        ${isSelected ? '<i class="fas fa-check text-brand-600 text-xs"></i>' : ''}
+                    </div>
+                `;
+                li.addEventListener('click', () => {
+                    selectBarangInDropdown(b.kode);
+                });
+                listEl.appendChild(li);
+            });
+        }
+
+        // Listener pencarian input dropdown & penutup klik di luar
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('dropdownSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    populateDropdownBarang(e.target.value);
+                });
+                searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const firstItem = document.querySelector('#dropdownOptionsList li');
+                        if (firstItem) firstItem.click();
+                    } else if (e.key === 'Escape') {
+                        closeSearchableDropdown();
+                    }
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                const wrapper = document.getElementById('searchableDropdownWrapper');
+                if (wrapper && !wrapper.contains(e.target)) {
+                    closeSearchableDropdown();
+                }
+            });
         });
 
         document.getElementById('searchTransaksi').addEventListener('input', (e) => {
@@ -1315,6 +1490,7 @@
 
                 document.getElementById('tStokInfo').textContent = "";
                 document.getElementById('formTransaksi').reset();
+                resetSearchableDropdown();
 
                 const cachedTrx = isMasuk ? appState.cacheMasuk : appState.cacheKeluar;
 
@@ -1429,6 +1605,10 @@
             const ket = document.getElementById('tKeterangan').value;
             const fileInput = document.getElementById('tBukti').files[0];
 
+            if (!k) {
+                return Swal.fire({ icon: 'warning', title: 'Pilih Barang', text: 'Silakan pilih barang terlebih dahulu.' });
+            }
+
             const itemData = appState.dataBarang.find(b => b.kode === k);
             if (appState.currentTrxType === 'Keluar') {
                 if (itemData && parseInt(j) > parseInt(itemData.stok)) return Swal.fire({ icon: 'warning', title: 'Stok Kurang', text: `Stok sisa ${itemData.stok}.` });
@@ -1441,6 +1621,7 @@
 
             if (res.success) {
                 Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Transaksi berhasil disimpan', timer: 1500, showConfirmButton:false });
+                resetSearchableDropdown();
                 appState.barangLoaded = false;
                 appState.cacheDashboard = null;
                 loadTransaksi(true);
